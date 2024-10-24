@@ -86,10 +86,10 @@ public class AddNewUser extends HttpServlet {
         boolean result = userDAO.addUser(newUser);
 
         if (result) {
-            response.sendRedirect("home");
+            response.sendRedirect("ListUser");
         } else {
             request.setAttribute("errorMessage", "Error adding user");
-            request.getRequestDispatcher("addNewUser.jsp").forward(request, response);
+            request.getRequestDispatcher("/View/User/addNewUser.jsp").forward(request, response);
         }
     }
 

@@ -51,21 +51,21 @@
                     <c:choose>
                         <c:when test="${not empty userList}">
                             <c:forEach var="u" items="${userList}">
-                                <tr>
+                                <tr id="user-${u.userId}">
                                     <td>${u.userId}</td>
                                     <td>${u.fullName}</td>
                                     <td>${u.userName}</td>
                                     <td>${u.departmentName}</td>
                                     <td>${u.roleName}</td>
-                                    <td>${u.status ? 'Active' : 'Inactive'}</td>
+                                    <td id="status-${u.userId}">${u.status ? 'Active' : 'Inactive'}</td>
                                     <td>${u.projectCount}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${u.status}">
-                                                <button class="btn btn-danger">Inactive</button>
+                                                <button class="btn btn-danger toggle-status" data-user-id="${u.userId}" data-current-status="1">Inactive</button>
                                             </c:when>
                                             <c:otherwise>
-                                                <button class="btn btn-success">Active</button>
+                                                <button class="btn btn-success toggle-status" data-user-id="${u.userId}" data-current-status="0">Active</button>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -82,8 +82,54 @@
                         </c:otherwise>
                     </c:choose>
                 </tbody>
+
             </table>
             <a href="home">Back to Home</a>
         </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Khi người dùng nhấn nút toggle trạng thái
+                $('.toggle-status').on('click', function () {
+                    var button = $(this);  // Nút được nhấn
+                    var userId = button.data('user-id');  // Lấy userId từ thuộc tính data
+                    var currentStatus = button.data('current-status');  // Lấy trạng thái hiện tại
+
+                    // Xác định trạng thái mới
+                    var newStatus = currentStatus == 1 ? 0 : 1;
+
+                    // Gửi yêu cầu AJAX để cập nhật trạng thái
+                    $.ajax({
+                        url: 'ListUser', // URL tới servlet xử lý
+                        type: 'POST',
+                        data: {
+                            userId: userId,
+                            status: newStatus
+                        },
+                        success: function (response) {
+                            // Cập nhật giao diện khi thành công
+                            var newStatusText = newStatus == 1 ? 'Active' : 'Inactive';
+                            var newButtonClass = newStatus == 1 ? 'btn-danger' : 'btn-success';
+                            var newButtonText = newStatus == 1 ? 'Inactive' : 'Active';
+
+                            // Cập nhật cột trạng thái
+                            $('#status-' + userId).text(newStatusText);
+
+                            // Cập nhật nút toggle
+                            button.removeClass('btn-success btn-danger').addClass(newButtonClass);
+                            button.text(newButtonText);
+                            button.data('current-status', newStatus);
+                        },
+                        error: function () {
+                            alert('Error updating status!');
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+
     </body>
 </html>

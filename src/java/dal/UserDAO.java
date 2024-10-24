@@ -50,11 +50,12 @@ public class UserDAO extends DBContext {
             String sql = "INSERT INTO user (full_name, user_name, email, password, role_id, dept_id, status) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+            String hashPassword = Library.hashPassword(user.getPassword());
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getUserName());
             ps.setString(3, user.getEmail());
-            ps.setString(4, user.getPassword());
+            ps.setString(4, hashPassword);
             ps.setInt(5, user.getRoleId());
             ps.setInt(6, user.getDep_id());
             ps.setBoolean(7, user.getStatus());
@@ -132,20 +133,46 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public boolean updateUser(User user) {
-        String sql = "UPDATE user SET user_name = ?, password = ?, email = ? WHERE user_id = ?";
+    public boolean updateUser(int user_id, String full_name, String user_name, String email, int role_id, int dept_id, boolean status) {
+        String sql = "UPDATE user SET full_name = ?, user_name = ?, email = ?, role_id = ?, dept_id = ?, status = ? WHERE user_id = ?";
         try {
             ps = connection.prepareStatement(sql);
-            ps.setString(1, user.getUserName());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getEmail());
-            ps.setInt(4, user.getUserId());
+            ps.setString(1, full_name);
+            ps.setString(2, user_name);
+            ps.setString(3, email);
+            ps.setInt(4, role_id);
+            ps.setInt(5, dept_id);
+            ps.setBoolean(6, status);
+            ps.setInt(7, user_id);
             ps.executeUpdate();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public User getUserById(int userId) {
+        User user = null;
+        String sql = "SELECT user_id, full_name, user_name, email, role_id, dept_id, status FROM user WHERE user_id = ?";
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setUserName(rs.getString("user_name"));
+                user.setEmail(rs.getString("email"));
+                user.setRoleId(rs.getInt("role_id"));
+                user.setDep_id(rs.getInt("dept_id"));
+                user.setStatus(rs.getBoolean("status"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 
     public ArrayList<User> sortAndSearchUser(String department, String sortOrder) {
@@ -219,6 +246,20 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public boolean updateUserStatus(int userId, boolean newStatus) {
+        String sql = "UPDATE user SET status = ? WHERE user_id = ?";
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setBoolean(1, newStatus);
+            ps.setInt(2, userId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu cập nhật thành công
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
         //System.out.println(dao.login("johndoe", "123"));
@@ -226,6 +267,8 @@ public class UserDAO extends DBContext {
         //System.out.println(dao.addUser(user));
         ArrayList<User> list = new ArrayList<>();
         //System.out.println(dao.sortAndSearchUser("", "asc"));
-        System.out.println(dao.register(new User("bb", "bb", "bb@gmail.com", "bb"))); 
+        //System.out.println(dao.register(new User("bb", "bb", "bb@gmail.com", "bb")));
+        //System.out.println(dao.updateUser(29, "cc", "ac", "cc@gmail.com", 16, 19, true));
+        System.out.println(dao.updateUserStatus(29, true));
     }
 }

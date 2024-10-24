@@ -77,7 +77,27 @@ public class ListUser extends HttpServlet {
             throws ServletException, IOException {
         UserDAO dao = new UserDAO();
 
-        // Lấy tham số từ yêu cầu
+        // Kiểm tra xem có yêu cầu thay đổi trạng thái (từ AJAX) không
+        String userIdParam = request.getParameter("userId");
+        String statusParam = request.getParameter("status");
+
+        if (userIdParam != null && statusParam != null) {
+            // Nếu có tham số userId và status, xử lý việc thay đổi trạng thái
+            int userId = Integer.parseInt(userIdParam);
+            int newStatus = Integer.parseInt(statusParam);
+
+            // Cập nhật trạng thái người dùng
+            boolean isUpdated = dao.updateUserStatus(userId, newStatus == 1);
+
+            if (isUpdated) {
+                response.setStatus(HttpServletResponse.SC_OK); // Thành công
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Thất bại
+            }
+            return; // Kết thúc xử lý cho AJAX, không thực hiện phần còn lại
+        }
+
+        // Nếu không phải là yêu cầu AJAX, thực hiện tìm kiếm và sắp xếp danh sách người dùng
         String departmentName = request.getParameter("departmentName");
         String sortOrder = request.getParameter("sortOrder");
 
@@ -91,7 +111,6 @@ public class ListUser extends HttpServlet {
             userList = dao.listUser(); // Lấy danh sách người dùng nếu không có tham số nào
         }
 
-        System.out.println(userList);
         request.setAttribute("userList", userList);
         request.getRequestDispatcher("/View/User/ListUser.jsp").forward(request, response);
     }
