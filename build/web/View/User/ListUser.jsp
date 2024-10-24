@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="model.User" %>
@@ -11,13 +11,14 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
+        <%@include file="../../header.jsp" %>
         <div class="container mt-5">
             <h2 class="text-center">Danh sách người dùng</h2>
             <!-- Thêm form tìm kiếm -->
-            <form action="listUserServlet" method="GET" class="mb-3">
+            <form action="ListUser" method="POST" class="mb-3">
                 <div class="row">
                     <div class="col-md-4">
-                        <input type="text" name="departmentName" placeholder="Tìm theo phòng ban và tên" class="form-control">
+                        <input type="text" name="departmentName" placeholder="Tìm theo tên phòng ban " class="form-control">
                     </div>
                     <div class="col-md-4">
                         <select name="sortOrder" class="form-control">
@@ -26,10 +27,10 @@
                             <option value="desc">Số lượng dự án (Giảm dần)</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>
+                        <a href="adduser" class="btn btn-success me-2">Thêm người dùng mới</a>
                     </div>
-                    <a href="adduser">Add new user</a>
                 </div>
             </form>
             <table class="table table-bordered">

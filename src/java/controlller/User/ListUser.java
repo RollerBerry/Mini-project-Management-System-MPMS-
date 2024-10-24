@@ -60,7 +60,6 @@ public class ListUser extends HttpServlet {
             throws ServletException, IOException {
         UserDAO dao = new UserDAO();
         ArrayList<User> userList = dao.listUser();
-        System.out.println(userList);
         request.setAttribute("userList", userList);
         request.getRequestDispatcher("/View/User/ListUser.jsp").forward(request, response);
     }
@@ -76,7 +75,25 @@ public class ListUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        UserDAO dao = new UserDAO();
+
+        // Lấy tham số từ yêu cầu
+        String departmentName = request.getParameter("departmentName");
+        String sortOrder = request.getParameter("sortOrder");
+
+        ArrayList<User> userList;
+
+        // Kiểm tra nếu có ít nhất một trong hai tham số là không rỗng
+        if ((departmentName != null && !departmentName.trim().isEmpty())
+                || (sortOrder != null && !sortOrder.trim().isEmpty())) {
+            userList = dao.sortAndSearchUser(departmentName, sortOrder);
+        } else {
+            userList = dao.listUser(); // Lấy danh sách người dùng nếu không có tham số nào
+        }
+
+        System.out.println(userList);
+        request.setAttribute("userList", userList);
+        request.getRequestDispatcher("/View/User/ListUser.jsp").forward(request, response);
     }
 
     /**
