@@ -20,11 +20,11 @@
                 <div class="col-md-6">
                     <h2 class="text-center mb-4">Đăng ký</h2>
 
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger" role="alert">
-                            ${error}
-                        </div>
-                    </c:if>
+                    <% if (request.getAttribute("error") != null) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= request.getAttribute("error") %>
+                    </div>
+                    <% } %>
 
                     <form action="Register" method="POST" onsubmit="return validateForm()">
                         <div class="mb-3">
@@ -50,7 +50,7 @@
                             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                         </div>
 
-                        <div id="passwordError" class="text-danger mb-3"></div> <!-- Thêm chỗ để hiển thị lỗi -->
+                        <div id="passwordError" class="text-danger mb-3"></div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
@@ -64,24 +64,48 @@
             </div>
         </div>
 
-        <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- JavaScript để kiểm tra mật khẩu và xác nhận mật khẩu -->
         <script>
-            function validateForm() {
-                var password = document.getElementById("password").value;
-                var confirmPassword = document.getElementById("confirmPassword").value;
-                var errorDiv = document.getElementById("passwordError");
+                        function validateForm() {
+                            var userName = document.getElementById("userName").value; // Không sử dụng trim() ở đây
+                            var password = document.getElementById("password").value; // Không sử dụng trim() ở đây
+                            var confirmPassword = document.getElementById("confirmPassword").value; // Không sử dụng trim() ở đây
+                            var errorDiv = document.getElementById("passwordError");
 
-                if (password !== confirmPassword) {
-                    errorDiv.innerHTML = "Mật khẩu và xác nhận mật khẩu không khớp.";
-                    return false;
-                }
+                            // Kiểm tra xem userName có chứa khoảng trắng
+                            if (userName.trim() === "" || password.trim() === "") {
+                                errorDiv.innerHTML = "Tên đăng nhập và mật khẩu không được để trống.";
+                                clearForm();
+                                return false;
+                            }
 
-                errorDiv.innerHTML = "";  // Xóa thông báo lỗi nếu mật khẩu khớp
-                return true;
-            }
+                            // Kiểm tra khoảng trắng
+                            if (userName.includes(" ") || password.includes(" ")) {
+                                errorDiv.innerHTML = "Tên đăng nhập và mật khẩu không được chứa dấu cách.";
+                                clearForm();
+                                return false;
+                            }
+
+                            // Kiểm tra mật khẩu và xác nhận mật khẩu
+                            if (password !== confirmPassword) {
+                                errorDiv.innerHTML = "Mật khẩu và xác nhận mật khẩu không khớp.";
+                                clearForm();
+                                return false;
+                            }
+
+                            errorDiv.innerHTML = "";  // Xóa thông báo lỗi nếu mọi thứ hợp lệ
+                            return true;
+                        }
+
+                        // Hàm để xóa giá trị của các trường
+                        function clearForm() {
+                            document.getElementById("fullname").value = "";
+                            document.getElementById("userName").value = "";
+                            document.getElementById("email").value = "";
+                            document.getElementById("password").value = "";
+                            document.getElementById("confirmPassword").value = "";
+                        }
         </script>
     </body>
 </html>
