@@ -48,6 +48,8 @@
     </table>
 
     <a href="issue-list">Back to Issue List</a>
+    <a href="requirement-list">Back to Requirements</a>
+
 </body>
 </html>
 
