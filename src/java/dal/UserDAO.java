@@ -18,16 +18,17 @@ import java.util.ArrayList;
 
 public class UserDAO extends DBContext {
 
-    public User login(String user_name, String password) {
+    public User login(String userNameOrEmail, String password) {
         try {
-            // Câu lệnh SQL kiểm tra user_name và password
-            String sql = "SELECT * FROM user WHERE user_name = ? AND password = ?";
+            String sql = "SELECT * FROM user WHERE (user_name = ? OR email = ?) AND password = ?";
+            String hashedPassword = Library.hashPassword(password);
+
             ps = connection.prepareStatement(sql);
-            ps.setString(1, user_name);
-            ps.setString(2, password);
+            ps.setString(1, userNameOrEmail);
+            ps.setString(2, userNameOrEmail); 
+            ps.setString(3, password); 
             rs = ps.executeQuery();
 
-            // Nếu tìm thấy người dùng, trả về đối tượng User
             if (rs.next()) {
                 User u = new User();
                 u.setUserId(rs.getInt("user_id"));
@@ -41,7 +42,6 @@ public class UserDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -70,6 +70,7 @@ public class UserDAO extends DBContext {
 
     public ArrayList<User> listUser() {
         ArrayList<User> list = new ArrayList<>();
+
         try {
             String sql = "SELECT \n"
                     + "    u.user_id, \n"
@@ -77,16 +78,15 @@ public class UserDAO extends DBContext {
                     + "    u.user_name, \n"
                     + "    s.name AS department_name, \n"
                     + "    ss.name AS role_name, \n"
-                    + "    u.status,\n"
-                    + "    COUNT(p.project_id) AS project_count  \n"
+                    + "    u.status \n"
                     + "FROM \n"
-                    + "    user u\n"
-                    + "JOIN \n"
-                    + "    setting s ON s.setting_id = u.dept_id\n"
-                    + "JOIN \n"
-                    + "    setting ss ON ss.setting_id = u.role_id\n"
+                    + "    user u \n"
                     + "LEFT JOIN \n"
-                    + "    project p ON p.dept_id = u.dept_id\n"
+                    + "    setting s ON s.setting_id = u.dept_id \n"
+                    + "LEFT JOIN \n"
+                    + "    setting ss ON ss.setting_id = u.role_id \n"
+                    + "LEFT JOIN \n"
+                    + "    project p ON p.dept_id = u.dept_id \n"
                     + "GROUP BY \n"
                     + "    u.user_id, \n"
                     + "    u.full_name, \n"
@@ -97,6 +97,7 @@ public class UserDAO extends DBContext {
 
             ps = connection.prepareStatement(sql);
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 User u = new User();
                 u.setUserId(rs.getInt("user_id"));
@@ -105,7 +106,6 @@ public class UserDAO extends DBContext {
                 u.setDepartmentName(rs.getString("department_name"));
                 u.setRoleName(rs.getString("role_name"));
                 u.setStatus(rs.getBoolean("status"));
-                u.setProjectCount(rs.getInt("project_count"));
                 list.add(u);
             }
 
@@ -175,7 +175,77 @@ public class UserDAO extends DBContext {
         return user;
     }
 
-    public ArrayList<User> sortAndSearchUser(String department, String sortOrder) {
+//    public ArrayList<User> sortAndSearchUser(String department, String sortOrder) {
+//        ArrayList<User> list = new ArrayList<>();
+//        try {
+//            // Bắt đầu câu lệnh SQL
+//            StringBuilder sql = new StringBuilder();
+//            sql.append("SELECT \n")
+//                    .append("    u.user_id, \n")
+//                    .append("    u.full_name, \n")
+//                    .append("    u.user_name, \n")
+//                    .append("    s.name AS department_name, \n")
+//                    .append("    ss.name AS role_name, \n")
+//                    .append("    u.status,\n")
+//                    .append("    COUNT(p.project_id) AS project_count  \n")
+//                    .append("FROM \n")
+//                    .append("    user u\n")
+//                    .append("JOIN \n")
+//                    .append("    setting s ON s.setting_id = u.dept_id\n")
+//                    .append("JOIN \n")
+//                    .append("    setting ss ON ss.setting_id = u.role_id\n")
+//                    .append("LEFT JOIN \n")
+//                    .append("    project p ON p.dept_id = u.dept_id\n");
+//
+//            // Kiểm tra nếu department không rỗng
+//            if (department != null && !department.trim().isEmpty()) {
+//                sql.append("WHERE s.name LIKE ? \n");
+//            }
+//
+//            sql.append("GROUP BY \n")
+//                    .append("    u.user_id, \n")
+//                    .append("    u.full_name, \n")
+//                    .append("    u.user_name, \n")
+//                    .append("    department_name, \n")
+//                    .append("    role_name, \n")
+//                    .append("    u.status");
+//
+//            // Thêm sắp xếp nếu có yêu cầu
+//            if (sortOrder != null && !sortOrder.isEmpty()) {
+//                if ("asc".equalsIgnoreCase(sortOrder)) {
+//                    sql.append(" ORDER BY project_count ASC");  // Sắp xếp tăng dần
+//                } else if ("desc".equalsIgnoreCase(sortOrder)) {
+//                    sql.append(" ORDER BY project_count DESC"); // Sắp xếp giảm dần
+//                }
+//            }
+//
+//            ps = connection.prepareStatement(sql.toString());
+//
+//            // Thiết lập giá trị cho tham số department nếu có
+//            if (department != null && !department.trim().isEmpty()) {
+//                ps.setString(1, "%" + department + "%");
+//            }
+//
+//            rs = ps.executeQuery();
+//            while (rs.next()) {
+//                User u = new User();
+//                u.setUserId(rs.getInt("user_id"));
+//                u.setFullName(rs.getString("full_name"));
+//                u.setUserName(rs.getString("user_name"));
+//                u.setDepartmentName(rs.getString("department_name"));
+//                u.setRoleName(rs.getString("role_name"));
+//                u.setStatus(rs.getBoolean("status"));
+//                u.setProjectCount(rs.getInt("project_count"));
+//                list.add(u);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return list;
+//    }
+    public ArrayList<User> searchUser(String department, String userName) {
         ArrayList<User> list = new ArrayList<>();
         try {
             // Bắt đầu câu lệnh SQL
@@ -186,20 +256,28 @@ public class UserDAO extends DBContext {
                     .append("    u.user_name, \n")
                     .append("    s.name AS department_name, \n")
                     .append("    ss.name AS role_name, \n")
-                    .append("    u.status,\n")
-                    .append("    COUNT(p.project_id) AS project_count  \n")
+                    .append("    u.status \n")
                     .append("FROM \n")
-                    .append("    user u\n")
+                    .append("    user u \n")
                     .append("JOIN \n")
-                    .append("    setting s ON s.setting_id = u.dept_id\n")
+                    .append("    setting s ON s.setting_id = u.dept_id \n")
                     .append("JOIN \n")
-                    .append("    setting ss ON ss.setting_id = u.role_id\n")
-                    .append("LEFT JOIN \n")
-                    .append("    project p ON p.dept_id = u.dept_id\n");
+                    .append("    setting ss ON ss.setting_id = u.role_id \n");
 
             // Kiểm tra nếu department không rỗng
+            boolean hasWhereClause = false;
+
             if (department != null && !department.trim().isEmpty()) {
                 sql.append("WHERE s.name LIKE ? \n");
+                hasWhereClause = true;
+            }
+
+            if (userName != null && !userName.trim().isEmpty()) {
+                if (hasWhereClause) {
+                    sql.append("AND u.user_name LIKE ? \n");
+                } else {
+                    sql.append("WHERE u.user_name LIKE ? \n");
+                }
             }
 
             sql.append("GROUP BY \n")
@@ -210,20 +288,16 @@ public class UserDAO extends DBContext {
                     .append("    role_name, \n")
                     .append("    u.status");
 
-            // Thêm sắp xếp nếu có yêu cầu
-            if (sortOrder != null && !sortOrder.isEmpty()) {
-                if ("asc".equalsIgnoreCase(sortOrder)) {
-                    sql.append(" ORDER BY project_count ASC");  // Sắp xếp tăng dần
-                } else if ("desc".equalsIgnoreCase(sortOrder)) {
-                    sql.append(" ORDER BY project_count DESC"); // Sắp xếp giảm dần
-                }
-            }
-
             ps = connection.prepareStatement(sql.toString());
 
-            // Thiết lập giá trị cho tham số department nếu có
+            int paramIndex = 1;
+
             if (department != null && !department.trim().isEmpty()) {
-                ps.setString(1, "%" + department + "%");
+                ps.setString(paramIndex++, "%" + department + "%");
+            }
+
+            if (userName != null && !userName.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + userName + "%");
             }
 
             rs = ps.executeQuery();
@@ -235,7 +309,6 @@ public class UserDAO extends DBContext {
                 u.setDepartmentName(rs.getString("department_name"));
                 u.setRoleName(rs.getString("role_name"));
                 u.setStatus(rs.getBoolean("status"));
-                u.setProjectCount(rs.getInt("project_count"));
                 list.add(u);
             }
 
@@ -253,7 +326,7 @@ public class UserDAO extends DBContext {
             ps.setBoolean(1, newStatus);
             ps.setInt(2, userId);
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0; // Trả về true nếu cập nhật thành công
+            return rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -269,6 +342,7 @@ public class UserDAO extends DBContext {
         //System.out.println(dao.sortAndSearchUser("", "asc"));
         //System.out.println(dao.register(new User("bb", "bb", "bb@gmail.com", "bb")));
         //System.out.println(dao.updateUser(29, "cc", "ac", "cc@gmail.com", 16, 19, true));
-        System.out.println(dao.updateUserStatus(29, true));
+        //System.out.println(dao.updateUserStatus(29, true));
+        System.out.println(dao.searchUser("Development", ""));
     }
 }

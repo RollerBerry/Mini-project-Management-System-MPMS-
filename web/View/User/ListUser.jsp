@@ -13,28 +13,34 @@
     <body>
         <%@include file="../../header.jsp" %>
         <div class="container mt-5">
-            <h2 class="text-center">Danh sách người dùng</h2>
-            <!-- Thêm form tìm kiếm -->
-            <form action="ListUser" method="POST" class="mb-3">
+            <h2 class="mb-4">Danh sách người dùng</h2>
+
+            <form action="ListUser" method="POST" class="mb-4">
                 <div class="row">
                     <div class="col-md-4">
-                        <input type="text" name="departmentName" placeholder="Tìm theo tên phòng ban " class="form-control">
+                        <label for="department" class="form-label">Chọn phòng ban</label>
+                        <select class="form-select" id="department" name="department">
+                            <option value="">Tất cả</option>
+                            <option value="HR">HR</option>
+                            <option value="Development">Development</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Finance">Finance</option>
+                            <!-- Thêm các phòng ban khác nếu cần -->
+                        </select>
                     </div>
                     <div class="col-md-4">
-                        <select name="sortOrder" class="form-control">
-                            <option value="">-- Sắp xếp theo --</option>
-                            <option value="asc">Số lượng dự án (Tăng dần)</option>
-                            <option value="desc">Số lượng dự án (Giảm dần)</option>
-                        </select>
+                        <label for="userName" class="form-label">Tìm theo tên đăng nhập</label>
+                        <input type="text" class="form-control" id="userName" name="userName" placeholder="Nhập tên đăng nhập">
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>
-                        <a href="adduser" class="btn btn-success me-2">Thêm người dùng mới</a>
+                        <a href="adduser" class="btn btn-success">Thêm người dùng mới</a>
                     </div>
                 </div>
             </form>
-            <table class="table table-bordered">
-                <thead class="thead-dark">
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Full Name</th>
@@ -42,7 +48,6 @@
                         <th>Department</th>
                         <th>Role</th>
                         <th>Status</th>
-                        <th>Project Count</th>
                         <th>Action</th>
                         <th>Edit Profile</th>
                     </tr>
@@ -58,16 +63,12 @@
                                     <td>${u.departmentName}</td>
                                     <td>${u.roleName}</td>
                                     <td id="status-${u.userId}">${u.status ? 'Active' : 'Inactive'}</td>
-                                    <td>${u.projectCount}</td>
                                     <td>
-                                        <c:choose>
-                                            <c:when test="${u.status}">
-                                                <button class="btn btn-danger toggle-status" data-user-id="${u.userId}" data-current-status="1">Inactive</button>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <button class="btn btn-success toggle-status" data-user-id="${u.userId}" data-current-status="0">Active</button>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <button class="btn ${u.status ? 'btn-danger' : 'btn-success'} toggle-status" 
+                                                data-user-id="${u.userId}" 
+                                                data-current-status="${u.status ? 1 : 0}">
+                                            ${u.status ? 'Inactive' : 'Active'}
+                                        </button>
                                     </td>
                                     <td>
                                         <a href="editProfileServlet?id=${u.userId}" class="btn btn-warning">Edit</a>
@@ -77,14 +78,13 @@
                         </c:when>
                         <c:otherwise>
                             <tr>
-                                <td colspan="9" class="text-center">No user.</td>
+                                <td colspan="8" class="text-center">No user.</td>
                             </tr>
                         </c:otherwise>
                     </c:choose>
                 </tbody>
-
             </table>
-            <a href="home">Back to Home</a>
+            <a href="home" class="btn btn-secondary mt-3">Back to Home</a>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

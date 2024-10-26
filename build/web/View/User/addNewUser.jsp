@@ -26,45 +26,28 @@
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
+
 
                 <div class="mb-3">
                     <label for="role" class="form-label">Role ID</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleStaff" value="16" required>
-                        <label class="form-check-label" for="roleStaff">Staff</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleTeamLeader" value="17" required>
-                        <label class="form-check-label" for="roleTeamLeader">Team Leader</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleProjectLeader" value="18" required>
-                        <label class="form-check-label" for="roleProjectLeader">Project Leader</label>
-                    </div>
+                    <select class="form-select" name="role" id="role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="6">Staff</option>
+                        <option value="7">Team Leader</option>
+                        <option value="8">Project Leader</option>
+                        <option value="9">Department Leader</option>
+                    </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="dept_id" class="form-label">Department</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptDevelopment" value="19" required>
-                        <label class="form-check-label" for="deptDevelopment">Development</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptMarketing" value="20" required>
-                        <label class="form-check-label" for="deptMarketing">Marketing</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptFinance" value="21" required>
-                        <label class="form-check-label" for="deptFinance">Finance</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptHR" value="22" required>
-                        <label class="form-check-label" for="deptHR">HR</label>
-                    </div>
+                    <select class="form-select" name="department" id="department" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="10">Development</option>
+                        <option value="11">Marketing</option>
+                        <option value="12">Finance</option>
+                        <option value="13">HR</option>
+                    </select>
                 </div>
 
                 <div class="mb-3">

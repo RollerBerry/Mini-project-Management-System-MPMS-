@@ -98,18 +98,20 @@ public class ListUser extends HttpServlet {
         }
 
         // Nếu không phải là yêu cầu AJAX, thực hiện tìm kiếm và sắp xếp danh sách người dùng
-        String departmentName = request.getParameter("departmentName");
-        String sortOrder = request.getParameter("sortOrder");
+        String department = request.getParameter("department");
+        String userName = request.getParameter("userName");
 
         ArrayList<User> userList;
 
         // Kiểm tra nếu có ít nhất một trong hai tham số là không rỗng
-        if ((departmentName != null && !departmentName.trim().isEmpty())
-                || (sortOrder != null && !sortOrder.trim().isEmpty())) {
-            userList = dao.sortAndSearchUser(departmentName, sortOrder);
+        if ((department != null && !department.trim().isEmpty())
+                || (userName != null && !userName.trim().isEmpty())) {
+
+            userList = dao.searchUser(department, userName);
         } else {
             userList = dao.listUser(); // Lấy danh sách người dùng nếu không có tham số nào
         }
+        System.out.println(userList);
 
         request.setAttribute("userList", userList);
         request.getRequestDispatcher("/View/User/ListUser.jsp").forward(request, response);

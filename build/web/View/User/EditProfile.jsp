@@ -32,38 +32,25 @@
 
                 <div class="mb-3">
                     <label for="role" class="form-label">Role</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleStaff" value="16" ${user.roleId == 16 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="roleStaff">Staff</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleTeamLeader" value="17" ${user.roleId == 17 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="roleTeamLeader">Team Leader</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="role" id="roleProjectLeader" value="18" ${user.roleId == 18 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="roleProjectLeader">Project Leader</label>
-                    </div>
+                    <select class="form-select" name="role" id="role" required>
+                        <option value="" disabled>Select Role</option>
+                        <option value="16" ${user.roleId == 16 ? 'selected' : ''}>Staff</option>
+                        <option value="17" ${user.roleId == 17 ? 'selected' : ''}>Team Leader</option>
+                        <option value="18" ${user.roleId == 18 ? 'selected' : ''}>Project Leader</option>
+                        <!-- Thêm các vai trò khác nếu cần -->
+                    </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="department" class="form-label">Department</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptDevelopment" value="19" ${user.dep_id == 19 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="deptDevelopment">Development</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptMarketing" value="20" ${user.dep_id == 20 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="deptMarketing">Marketing</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptFinance" value="21" ${user.dep_id == 21 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="deptFinance">Finance</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="department" id="deptHR" value="22" ${user.dep_id == 22 ? 'checked' : ''} required>
-                        <label class="form-check-label" for="deptHR">HR</label>
-                    </div>
+                    <select class="form-select" name="department" id="department" required>
+                        <option value="" disabled>Select Department</option>
+                        <option value="19" ${user.dep_id == 19 ? 'selected' : ''}>Development</option>
+                        <option value="20" ${user.dep_id == 20 ? 'selected' : ''}>Marketing</option>
+                        <option value="21" ${user.dep_id == 21 ? 'selected' : ''}>Finance</option>
+                        <option value="22" ${user.dep_id == 22 ? 'selected' : ''}>HR</option>
+                        <!-- Thêm các phòng ban khác nếu cần -->
+                    </select>
                 </div>
 
                 <div class="mb-3">
