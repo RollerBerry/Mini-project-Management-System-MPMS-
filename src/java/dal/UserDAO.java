@@ -34,6 +34,7 @@ public class UserDAO extends DBContext {
                 u.setUserId(rs.getInt("user_id"));
                 u.setFullName(rs.getString("full_name"));
                 u.setUserName(rs.getString("user_name"));
+                u.setEmail(rs.getString("email"));
                 u.setPassword(rs.getString("password"));
                 u.setRoleId(rs.getInt("role_id"));
                 return u;
@@ -363,6 +364,22 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return false; // Trả về false nếu có lỗi
+    }
+
+    public boolean updateUserProfile(int userId, String fullName, String userName, String email) {
+        String sql = "UPDATE user SET full_name = ?, user_name = ?, email = ? WHERE user_id = ?";
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, fullName);
+            ps.setString(2, userName);
+            ps.setString(3, email);
+            ps.setInt(4, userId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; 
     }
 
     public static void main(String[] args) {
