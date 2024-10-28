@@ -55,6 +55,9 @@
                         <div class="mt-3 text-center">
                             <p>Chưa có tài khoản? <a href="Register">Nhấp vào đây để đăng ký</a></p>
                         </div>
+                        <div class="mt-3 text-center">
+                            <p>Quên mật khẩu? <a href="SendResetLink">Nhấp vào đây để lấy lại mật khẩu</a></p>
+                        </div>
                     </div>
                 </div>
             </div>

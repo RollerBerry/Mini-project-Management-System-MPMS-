@@ -25,8 +25,8 @@ public class UserDAO extends DBContext {
 
             ps = connection.prepareStatement(sql);
             ps.setString(1, userNameOrEmail);
-            ps.setString(2, userNameOrEmail); 
-            ps.setString(3, password); 
+            ps.setString(2, userNameOrEmail);
+            ps.setString(3, password);
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -319,6 +319,9 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+//    public boolean editProfile(){
+//        String sql = "Update user ";
+//    }
     public boolean updateUserStatus(int userId, boolean newStatus) {
         String sql = "UPDATE user SET status = ? WHERE user_id = ?";
         try {
@@ -333,6 +336,35 @@ public class UserDAO extends DBContext {
         }
     }
 
+    public boolean emailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu có ít nhất 1 bản ghi thì email đã tồn tại
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Email không tồn tại
+    }
+
+    public boolean updatePassword(String email, String newPassword) {
+        String sql = "UPDATE user SET password = ? WHERE email = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, newPassword);
+            ps.setString(2, email);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu cập nhật thành công
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Trả về false nếu có lỗi
+    }
+
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
         //System.out.println(dao.login("johndoe", "123"));
@@ -343,6 +375,7 @@ public class UserDAO extends DBContext {
         //System.out.println(dao.register(new User("bb", "bb", "bb@gmail.com", "bb")));
         //System.out.println(dao.updateUser(29, "cc", "ac", "cc@gmail.com", 16, 19, true));
         //System.out.println(dao.updateUserStatus(29, true));
-        System.out.println(dao.searchUser("Development", ""));
+        //System.out.println(dao.searchUser("Development", ""));
+        System.out.println(dao.emailExists("ahihi@gmail.com"));
     }
 }
