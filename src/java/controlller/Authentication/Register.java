@@ -4,6 +4,8 @@
  */
 package controlller.Authentication;
 
+import Service.EmailService;
+import Service.Library;
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -81,9 +83,19 @@ public class Register extends HttpServlet {
         boolean success = dao.register(user);
 
         if (success) {
-            response.sendRedirect("login");
+
+            String code = Library.generateSixDigitCode();
+
+            String subject = "Mã xác nhận đăng ký tài khoản";
+            String body = "Mã xác nhận của bạn là: " + code;
+            EmailService.sendEmail(email, subject, body);
+
+            // Lưu mã xác nhận vào session hoặc cơ sở dữ liệu để xác thực sau này
+            request.getSession().setAttribute("verificationCode", code);
+
+            response.sendRedirect("verify");
         } else {
-            request.setAttribute("error", "Đăng ký thất bại");
+            request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại.");
             request.getRequestDispatcher("/View/Authentication/Register.jsp").forward(request, response);
         }
     }
